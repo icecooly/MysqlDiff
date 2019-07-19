@@ -1,0 +1,11 @@
+README.md
+setup.py
+MysqlDiff/Column.py
+MysqlDiff/MysqlDiff.py
+MysqlDiff/Table.py
+MysqlDiff/__init__.py
+MysqlDiff.egg-info/PKG-INFO
+MysqlDiff.egg-info/SOURCES.txt
+MysqlDiff.egg-info/dependency_links.txt
+MysqlDiff.egg-info/requires.txt
+MysqlDiff.egg-info/top_level.txt
