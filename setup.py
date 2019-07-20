@@ -7,7 +7,7 @@ from os import path
 See https://github.com/icecooly/MysqlDiff
 """
 
-VERSION = '1.7'
+VERSION = '1.8'
 
 DESCRIPTION = (
     '自动检测新旧库表的差异以及字段差异,方便升级项目时更新旧表'

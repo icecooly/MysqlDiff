@@ -82,8 +82,10 @@ class MysqlDiff(object):
         cursor.close()
         return columns
 
-    def diff(self,dbHost, dbUser, dbPassword, dbName, dbPort,dbHost2, dbUser2, dbPassword2, db2Name,
+    @staticmethod
+    def diff(dbHost, dbUser, dbPassword, dbName, dbPort,dbHost2, dbUser2, dbPassword2, db2Name,
              dbPort2,contentTables=None,debug=False):
+        instance=MysqlDiff()
         if debug:
             print("dbHost:%s,dbUser:%s,dbPassword:%s,dbName:%s,dbPort:%d contentTables:%s" %
               (dbHost, dbUser, dbPassword, dbName, dbPort,contentTables))
@@ -91,14 +93,14 @@ class MysqlDiff(object):
               (dbHost2, dbUser2, dbPassword2, db2Name, dbPort2))
         db = pymysql.connect(dbHost, dbUser, dbPassword, dbName, dbPort, charset="utf8")
         db2 = pymysql.connect(dbHost2, dbUser2, dbPassword2, db2Name, dbPort2, charset="utf8")
-        tables = self.getTables(db,dbName,debug);
-        tables2 = self.getTables(db2,db2Name,debug);
-        self.diffTables(1,db2,db,db2Name,dbName,tables2,tables)
-        self.diffTables(2,db,db2,dbName,db2Name,tables,tables2)
+        tables = instance.getTables(db,dbName,debug);
+        tables2 = instance.getTables(db2,db2Name,debug);
+        instance.diffTables(1,db2,db,db2Name,dbName,tables2,tables)
+        instance.diffTables(2,db,db2,dbName,db2Name,tables,tables2)
         print("\n\n")
         if(contentTables!=None):
             for tableName in contentTables:
-                self.diffTableContent(db,db2,dbName,db2Name,tableName,debug)
+                instance.diffTableContent(db,db2,dbName,db2Name,tableName,debug)
 
     def diffTables(self,index,db,db2,dbName,dbName2,tables,tables2):
         print("====================db%d[%s] difference============================"%(index,dbName2))
