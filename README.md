@@ -29,8 +29,8 @@ pip install MysqlDiff
 
 >>> ====================[t_config] content differesnce============================
 >>> ====================db1[db_test.t_config] difference============================
->>> miss row 1,system.web.url,https://cs.xxx.com/,String,0,0,首页地址,1971-01-01 00:00:00,2019-06-11 21:46:41
+>>> miss row 1,system.web.url,https://cs.xxx.com/,String,0,0,首页地址
 >>> ====================db2[db_test.t_config] difference============================
->>> miss row 1,system.web.url,https://cs.xxx.cn/,String,0,0,首页地址,1971-01-01 00:00:00,2018-08-24 17:36:45
+>>> miss row 1,system.web.url,https://cs.xxx.cn/,String,0,0,首页地址
 
 ```
