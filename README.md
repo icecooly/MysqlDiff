@@ -9,9 +9,8 @@ pip install MysqlDiff
 ```
 
 
-## 使用
+## 对比表结构
 ```python
-对比表结构
 >>> from MysqlDiff import MysqlDiff
 >>> MysqlDiff.diff('127.0.0.1','root','password','db_test',3306,'127.0.0.1','root','password','db_test',3307)
 >>> ====================db1[db_test] difference============================
@@ -20,8 +19,8 @@ pip install MysqlDiff
 >>> t_test2 miss column name
 ```
 
+## 除了对比表结构，也对比表的内容
 ```python
-对比表t_config的内容是否一致
 >>> from MysqlDiff import MysqlDiff
 >>> MysqlDiff.diff('127.0.0.1','root','password','db_test',3306,'127.0.0.1','root','password','db_test',3307,['t_config'])
 >>> ====================db1[db_test] difference============================
