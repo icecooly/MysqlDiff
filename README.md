@@ -9,7 +9,7 @@ pip install MysqlDiff
 ```
 
 
-## 对比表结构
+## 使用
 ```python
 >>> from MysqlDiff import MysqlDiff
 >>> MysqlDiff.diff('127.0.0.1','root','password','db_test',3306,'127.0.0.1','root','password','db_test',3307)
@@ -19,7 +19,6 @@ pip install MysqlDiff
 >>> t_test2 miss column name
 ```
 
-## 除了对比表结构，也对比表的内容
 ```python
 >>> from MysqlDiff import MysqlDiff
 >>> MysqlDiff.diff('127.0.0.1','root','password','db_test',3306,'127.0.0.1','root','password','db_test',3307,['t_config'])
@@ -27,11 +26,15 @@ pip install MysqlDiff
 >>> miss table t_test
 >>> ====================db2[db_test] difference============================
 >>> t_test2 miss column name
+```
 
->>> ====================[t_config] content differesnce============================
->>> ====================db1[db_test.t_config] difference============================
->>> miss row 1,system.web.url,https://cs.xxx.com/,String,0,0,首页地址
->>> ====================db2[db_test.t_config] difference============================
->>> miss row 1,system.web.url,https://cs.xxx.cn/,String,0,0,首页地址
-
+## ssh隧道
+```python
+>>> from MysqlDiff import MysqlDiff
+>>> MysqlDiff.diff('127.0.0.1','root','password','db_test',3306,'127.0.0.1','root','password','db_test',3307,['t_config'],True,
+'ssh_host',ssh_port,ssh_username,ssh_password)
+>>> ====================db1[db_test] difference============================
+>>> miss table t_test
+>>> ====================db2[db_test] difference============================
+>>> t_test2 miss column name
 ```

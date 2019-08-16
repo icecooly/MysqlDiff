@@ -1,11 +1,11 @@
 #!/usr/bin/python
 #-*-coding:utf-8-*-
 
+import os
 import json
 import pymysql
 import hashlib
-# import sys;
-# sys.path.append(".")
+from sshtunnel import SSHTunnelForwarder
 from . import Table
 from . import Column
 
@@ -83,16 +83,43 @@ class MysqlDiff(object):
         return columns
 
     @staticmethod
-    def diff(dbHost, dbUser, dbPassword, dbName, dbPort,dbHost2, dbUser2, dbPassword2, db2Name,
-             dbPort2,contentTables=None,debug=False):
+    def diff(dbHost, dbUser, dbPassword, dbName, dbPort,
+             db2Host, db2User, db2Password, db2Name,db2Port,
+             contentTables=None, debug=False,
+             dbSshHost=None,dbSshPort=0,dbSshUserName=None,dbSshPassword=None,
+             db2SshHost=None,db2SshPort=0,db2SshUserName=None,db2SshPassword=None,
+             ):
         instance=MysqlDiff()
         if debug:
-            print("dbHost:%s,dbUser:%s,dbPassword:%s,dbName:%s,dbPort:%d contentTables:%s" %
-              (dbHost, dbUser, dbPassword, dbName, dbPort,contentTables))
-            print("dbHost2:%s,dbUser2:%s,dbPassword2:%s,dbName2:%s,dbPort2:%d" %
-              (dbHost2, dbUser2, dbPassword2, db2Name, dbPort2))
-        db = pymysql.connect(dbHost, dbUser, dbPassword, dbName, dbPort, charset="utf8")
-        db2 = pymysql.connect(dbHost2, dbUser2, dbPassword2, db2Name, dbPort2, charset="utf8")
+            print("dbHost:%s,dbUser:%s,dbPassword:%s,dbName:%s,dbPort:%d dbSshHost:%s dbSshPort:%d dbSshUserName:%s dbSshPassword:%s" %
+              (dbHost, dbUser, dbPassword, dbName, dbPort,dbSshHost,dbSshPort,dbSshUserName,dbSshPassword))
+            print("db2Host:%s,db2User:%s,db2Password:%s,db2Name:%s,db2Port:%d db2SshHost:%s db2SshPort:%d db2SshUserName:%s db2SshPassword:%s" %
+              (db2Host, db2User, db2Password, db2Name, db2Port,db2SshHost,db2SshPort,db2SshUserName,db2SshPassword))
+            print("contentTables:%s"%contentTables)
+        #
+        if (dbSshHost != None):
+            server = SSHTunnelForwarder(
+                (dbSshHost, dbSshPort),
+                ssh_username=dbSshUserName,
+                ssh_password=dbSshPassword,
+                remote_bind_address=(dbHost, dbPort))
+            server.start()
+            print('server.local_bind_port:%d'%server.local_bind_port)
+            db = pymysql.connect('127.0.0.1', dbUser, dbPassword, dbName, server.local_bind_port, charset="utf8")
+        else:
+            db = pymysql.connect(dbHost, dbUser, dbPassword, dbName, dbPort, charset="utf8")
+        #
+        if (db2SshHost != None):
+            server2 = SSHTunnelForwarder(
+                (db2SshHost, db2SshPort),
+                ssh_username=db2SshUserName,
+                ssh_password=db2SshPassword,
+                remote_bind_address=(db2Host, db2Port))
+            server2.start()
+            db2 = pymysql.connect('127.0.0.1', db2User, db2Password, db2Name, server2.local_bind_port, charset="utf8")
+        else:
+            db2 = pymysql.connect(db2Host, db2User, db2Password, db2Name, db2Port, charset="utf8")
+        #
         tables = instance.getTables(db,dbName,debug);
         tables2 = instance.getTables(db2,db2Name,debug);
         instance.diffTables(1,db2,db,db2Name,dbName,tables2,tables)
@@ -101,6 +128,8 @@ class MysqlDiff(object):
         if(contentTables!=None):
             for tableName in contentTables:
                 instance.diffTableContent(db,db2,dbName,db2Name,tableName,debug)
+        #
+        os._exit(0)
 
     def diffTables(self,index,db,db2,dbName,dbName2,tables,tables2):
         print("====================db%d[%s] difference============================"%(index,dbName2))
